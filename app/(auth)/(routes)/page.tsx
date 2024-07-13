@@ -1,11 +1,13 @@
 "use client"
 
 import FormInput from "@/components/form/form-input"
+import GridBackground from "@/components/grid-background"
 import { Button } from "@/components/ui/button"
 import { Form, FormField, FormItem } from "@/components/ui/form"
-import GridBackground from "@/components/ui/grid-background"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, SquareLibrary } from "lucide-react"
+import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -15,6 +17,8 @@ const formSchema = z.object({
 })
 
 const AuthPage = () => {
+  const router = useRouter()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -25,8 +29,19 @@ const AuthPage = () => {
 
   const isLoading = form.formState.isSubmitting
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await signIn("credentials", {
+        redirect: false,
+        callbackUrl: `${window.location.origin}/home`,
+        ...values
+      })
+
+      router.push("/home")
+      router.refresh()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -47,7 +62,7 @@ const AuthPage = () => {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormInput title="Username" type="text" field={field} />
+                    <FormInput title="Username" type="text" field={field} disabled={isLoading} />
                   </FormItem>
                 )}
               />
@@ -56,7 +71,7 @@ const AuthPage = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormInput title="Password" type="password" field={field} />
+                    <FormInput title="Password" type="password" field={field} disabled={isLoading} />
                   </FormItem>
                 )}
               />
