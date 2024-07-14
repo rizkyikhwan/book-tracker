@@ -1,5 +1,4 @@
 import { getAuthSession } from "@/lib/nextAuth";
-import Head from "next/head";
 import { redirect } from "next/navigation";
 
 const LayoutAuth = async ({ children }: { children: React.ReactNode }) => {
