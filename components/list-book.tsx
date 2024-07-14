@@ -35,7 +35,7 @@ const ListBook = ({ bookmark }: { bookmark: BooksData[] }) => {
     getListBook()
 
     dispatch(setBookmark(bookmark))
-  }, [bookmark])
+  }, [bookmark, dispatch])
 
   return (
     <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-2.5">
