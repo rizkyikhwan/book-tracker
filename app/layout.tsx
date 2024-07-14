@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import ClientSessionProvider from "@/components/provider/ClientSessionProvider";
+import ClientProvider from "@/components/provider/ClientProvider";
+import { Toaster } from "@/components/ui/sonner"
+import NextTopLoader from 'nextjs-toploader'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,11 +19,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <ClientSessionProvider>
+      <ClientProvider>
         <body className={inter.className}>
+          <NextTopLoader color="#F7E7DC" showSpinner={false} />
           {children}
+          <Toaster richColors />
         </body>
-      </ClientSessionProvider>
+      </ClientProvider>
     </html>
   );
 }

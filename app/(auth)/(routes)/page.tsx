@@ -8,7 +8,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, SquareLibrary } from "lucide-react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 import { z } from "zod"
 
 const formSchema = z.object({
@@ -18,6 +20,7 @@ const formSchema = z.object({
 
 const AuthPage = () => {
   const router = useRouter()
+  const [isDisabled, setIsDisabled] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -31,14 +34,21 @@ const AuthPage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await signIn("credentials", {
+      const res = await signIn("credentials", {
         redirect: false,
         callbackUrl: `${window.location.origin}/home`,
         ...values
       })
 
-      router.push("/home")
-      router.refresh()
+      if (res?.error) {
+        toast.error(res.error)
+      }
+
+      if (res?.ok) {
+        setIsDisabled(true)
+        router.push("/home")
+        router.refresh()
+      }
     } catch (error) {
       console.log(error)
     }
@@ -76,8 +86,8 @@ const AuthPage = () => {
                 )}
               />
               <div className="w-full h-px bg-slate-200" />
-              <Button type="submit" className="mt-4" variant="main" disabled={isLoading}>
-                {isLoading ? <Loader2 className="animate-spin" /> : "Sign In"}
+              <Button type="submit" className="mt-4" variant="main" disabled={isLoading || isDisabled}>
+                {isLoading || isDisabled ? <Loader2 className="animate-spin" /> : "Sign In"}
               </Button>
             </div>
           </form>
