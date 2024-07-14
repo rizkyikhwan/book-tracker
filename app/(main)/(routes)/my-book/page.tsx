@@ -24,7 +24,7 @@ const MyBook = () => {
       setRead(listBookmark.books.filter((book: MyBooksList) => book.status === "read"))
       setFinished(listBookmark.books.filter((book: MyBooksList) => book.status === "finished"))
     }
-  }, [isSuccess, isLoading])
+  }, [isSuccess, isLoading, listBookmark])
 
   return (
     <>
